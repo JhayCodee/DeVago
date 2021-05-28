@@ -12,6 +12,7 @@ db = SQL("sqlite:///devago.db")
 
 @app.route("/")
 def index():
+   # places = db.excute("SELECT * FROM places WHERE id=:id", id = session["user_id"]) )
     return render_template("register.html")
 
 
@@ -83,9 +84,16 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/")
+        #eturn redirect(url_for("index"))
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
+
+@app.route ("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
 
