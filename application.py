@@ -100,7 +100,7 @@ def register():
         #peticion del nombre de usuario
         rows1 = db.execute("SELECT nombre FROM user WHERE nombre=:username",
                                 username=request.form.get("username"))
-        flash("Bienvenido!")
+        flash("¡Bienvenido!")
         return redirect("/")
 
     else:
