@@ -21,11 +21,47 @@ db = SQL("sqlite:///devago.db")
 def index():
     return render_template("index.html")
 
-
 @app.route("/lugares")
 @login_required
 def Lugares():
     return render_template("lugares.html")
+
+
+@app.route("/hoteles")
+@login_required
+def Hoteles():
+    return render_template("hoteles.html")
+
+
+@app.route("/buscar")
+@login_required
+def Buscar():
+    return render_template("search.html")
+
+
+@app.route("/about")
+@login_required
+def About():
+    return render_template("about.html")
+
+@app.route("/add")
+@login_required
+def Add():
+
+    if request.method == "POST":
+        nombre = request.form.get("nombre")
+        departamento = request.form.get("departamento")
+        direccion = request.form.get("direccion")
+        descripcion= request.form.get("descripcion")
+        precio = request.form.get("precio")
+
+        # Inserta el usario en la tabla.
+        insertar = db.execute("""INSERT INTO lugares (nombre, departamento, direccion, descripcion, precio)
+                                 VALUES(:nombre, :depa, :dire, :descp, :precio)""",
+                                nombre=nombre, depa=departamento, dire=direccion, descp=descripcion, precio=precio)
+        redirect("/")
+    else:
+        return render_template("add.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
