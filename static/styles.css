@@ -1,0 +1,19 @@
+body{
+    background: url(/static/bk.jpg);
+    background-size: cover;
+}
+
+.containr{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3em;
+    margin-left: 3em;
+
+    display: grid;
+}
+
+.item-img{
+    max-width: 100%;
+    display: block;
+}

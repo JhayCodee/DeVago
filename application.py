@@ -17,8 +17,15 @@ Session(app)
 db = SQL("sqlite:///devago.db")
 
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
+
+
+@app.route("/lugares")
+@login_required
+def Lugares():
+    return render_template("lugares.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -57,18 +64,18 @@ def register():
         #peticion del nombre de usuario
         rows1 = db.execute("SELECT nombre FROM user WHERE nombre=:username",
                                 username=request.form.get("username"))
-        #flash("Bienvenido!")
+        flash("Bienvenido!")
         return redirect("/")
 
     else:
-        return render_template("login.html")
+        return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
 
     # Forget any user_id
-
+    session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
