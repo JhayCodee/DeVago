@@ -51,14 +51,19 @@ def Add():
     if request.method == "POST":
         nombre = request.form.get("nombre")
         departamento = request.form.get("departamento")
-        direccion = request.form.get("direccion")
         descripcion= request.form.get("descripcion")
         precio = request.form.get("precio")
+        url= request.form.get("url")
 
         # Inserta el usario en la tabla.
-        insertar = db.execute("""INSERT INTO lugares (nombre, departamento, direccion, descripcion, precio)
-                                 VALUES(:nombre, :depa, :dire, :descp, :precio)""",
-                                nombre=nombre, depa=departamento, dire=direccion, descp=descripcion, precio=precio)
+        insertar = db.execute('''
+                            INSERT INTO hoteles
+                            (nombre, departamento, descripcion, precio, urlimage)
+                            VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, urlimage=url)
+
         redirect("/")
     else:
         return render_template("add.html")
