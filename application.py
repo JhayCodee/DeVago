@@ -21,13 +21,13 @@ db = SQL("sqlite:///devago.db")
 def index():
     return render_template("index.html")
 
-@app.route("/lugares")
+@app.route("/lugares", methods=["GET", "POST"])
 @login_required
 def Lugares():
     return render_template("lugares.html")
 
 
-@app.route("/hoteles")
+@app.route("/hoteles", methods=["GET", "POST"])
 @login_required
 def Hoteles():
     return render_template("hoteles.html")
@@ -44,22 +44,30 @@ def Buscar():
 def About():
     return render_template("about.html")
 
-@app.route("/add")
+@app.route("/add", methods=["GET", "POST"])
 @login_required
-def Add():
+def add():
 
     if request.method == "POST":
+
         nombre = request.form.get("nombre")
         departamento = request.form.get("departamento")
-        direccion = request.form.get("direccion")
         descripcion= request.form.get("descripcion")
         precio = request.form.get("precio")
+        url= request.form.get("url")
 
         # Inserta el usario en la tabla.
-        insertar = db.execute("""INSERT INTO lugares (nombre, departamento, direccion, descripcion, precio)
-                                 VALUES(:nombre, :depa, :dire, :descp, :precio)""",
-                                nombre=nombre, depa=departamento, dire=direccion, descp=descripcion, precio=precio)
-        redirect("/")
+        insertar = db.execute('''
+                            INSERT INTO hoteles
+                            (nombre, departamento, descripcion, precio, urlimage)
+                            VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, urlimage=url)
+
+        row = db.execute('SELECT * FROM hoteles'
+        render_template("hoteles.html", rows=row)
+
     else:
         return render_template("add.html")
 
