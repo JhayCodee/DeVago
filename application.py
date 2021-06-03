@@ -1,5 +1,7 @@
 from cs50 import SQL
 from flask import Flask, redirect, render_template, request, session, flash
+from flask_session import Session
+from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from flask_session import Session
@@ -12,13 +14,64 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///devago.db")
 
 @app.route("/")
+@login_required
 def index():
-   # places = db.excute("SELECT * FROM places WHERE id=:id", id = session["user_id"]) )
-    return render_template("register.html")
+    return render_template("index.html")
+
+@app.route("/lugares", methods=["GET", "POST"])
+@login_required
+def Lugares():
+    return render_template("lugares.html")
+
+
+@app.route("/hoteles", methods=["GET", "POST"])
+@login_required
+def Hoteles():
+    return render_template("hoteles.html")
+
+
+@app.route("/buscar")
+@login_required
+def Buscar():
+    return render_template("search.html")
+
+
+@app.route("/about")
+@login_required
+def About():
+    return render_template("about.html")
+
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add():
+
+    if request.method == "POST":
+
+        nombre = request.form.get("nombre")
+        departamento = request.form.get("departamento")
+        descripcion= request.form.get("descripcion")
+        precio = request.form.get("precio")
+        url= request.form.get("url")
+
+        # Inserta el usario en la tabla.
+        insertar = db.execute('''
+                            INSERT INTO hoteles
+                            (nombre, departamento, descripcion, precio, urlimage)
+                            VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, urlimage=url)
+
+        row = db.execute('SELECT * FROM hoteles'
+        return render_template("hoteles.html", rows=rows)
+
+    else:
+        return render_template("add.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -57,16 +110,20 @@ def register():
         #peticion del nombre de usuario
         rows1 = db.execute("SELECT nombre FROM user WHERE nombre=:username",
                                 username=request.form.get("username"))
-        flash("Bienvenido!")
-        return render_template("register.html")
+        flash("¡Bienvenido!")
+        return redirect("/")
 
     else:
         return render_template("register.html")
 
-@app.route ("/login", methods = ["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    """Log user in"""
+
+    # Forget any user_id
     session.clear()
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
         # Ensure username was submitted
@@ -82,23 +139,25 @@ def login():
                           username=request.form.get("username"))
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        if len(rows) != 1 or not check_password_hash(rows[0]["contraseña"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0]["idusuario"]
 
         # Redirect user to home page
-        #eturn redirect(url_for("index"))
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
-@app.route ("/logout")
+@app.route("/logout")
 def logout():
+    """Log user out"""
 
+    # Forget any user_id
     session.clear()
 
+    # Redirect user to login form
     return redirect("/")
-
