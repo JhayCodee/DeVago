@@ -30,7 +30,10 @@ def Lugares():
 @app.route("/hoteles", methods=["GET", "POST"])
 @login_required
 def Hoteles():
-    return render_template("hoteles.html")
+
+
+    rows = db.execute('SELECT * FROM hoteles')
+    return render_template("hoteles.html", rows=rows)
 
 
 @app.route("/buscar")
@@ -65,8 +68,8 @@ def add():
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
                             precio=precio, urlimage=url)
 
-        row = db.execute('SELECT * FROM hoteles'
-        render_template("hoteles.html", rows=row)
+        rows = db.execute('SELECT * FROM hoteles')
+        return render_template("hoteles.html", rows=rows)
 
     else:
         return render_template("add.html")
