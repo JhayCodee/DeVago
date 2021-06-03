@@ -44,9 +44,9 @@ def Buscar():
 def About():
     return render_template("about.html")
 
-@app.route("/add")
+@app.route("/add", methods=["GET", "POST"])
 @login_required
-def Add():
+def add():
 
     if request.method == "POST":
         nombre = request.form.get("nombre")
@@ -64,7 +64,14 @@ def Add():
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
                             precio=precio, urlimage=url)
 
-        redirect("/")
+
+        rows = db.execute('''
+                        SELECT nombre, departamento, descripcion, precio, urlimage
+                        FROM hoteles
+                        ''')
+
+
+        render_template("lugares.html", rows=rows)
     else:
         return render_template("add.html")
 
