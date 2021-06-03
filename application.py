@@ -21,13 +21,13 @@ db = SQL("sqlite:///devago.db")
 def index():
     return render_template("index.html")
 
-@app.route("/lugares")
+@app.route("/lugares", methods=["GET", "POST"])
 @login_required
 def Lugares():
     return render_template("lugares.html")
 
 
-@app.route("/hoteles")
+@app.route("/hoteles", methods=["GET", "POST"])
 @login_required
 def Hoteles():
     return render_template("hoteles.html")
@@ -49,6 +49,7 @@ def About():
 def add():
 
     if request.method == "POST":
+
         nombre = request.form.get("nombre")
         departamento = request.form.get("departamento")
         descripcion= request.form.get("descripcion")
@@ -64,14 +65,9 @@ def add():
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
                             precio=precio, urlimage=url)
 
+        row = db.execute('SELECT * FROM hoteles'
+        render_template("hoteles.html", rows=row)
 
-        rows = db.execute('''
-                        SELECT nombre, departamento, descripcion, precio, urlimage
-                        FROM hoteles
-                        ''')
-
-
-        render_template("lugares.html", rows=rows)
     else:
         return render_template("add.html")
 
