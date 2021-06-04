@@ -1,5 +1,5 @@
 body{
-    background: url(/static/bk.jpg);
+    background: url(https://i.pinimg.com/originals/18/d8/6c/18d86c6b5c3d7aea99f41f56e1627f45.jpg);
     background-size: cover;
 }
 
@@ -59,5 +59,38 @@ body{
 .item-img{
   max-width: 100%;
   display: block;
+}
+
+
+
+/*------------------index------------------------------*/
+
+.bgimg {
+  /* Add position: relative to enable absolutely positioned elements inside the image (place text) */
+  position: relative;
+  /* Add a white text color to all elements inside the .bgimg container */
+  color: white;
+  /* Add a font */
+  font-family: "Courier New", Courier, monospace;
+  /* Set the font-size to 25 pixels */
+  font-size: 25px;
+}
+
+
+
+
+/* Position text in the middle */
+.middle {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Style the <hr> element */
+hr {
+  margin: auto;
+  width: 40%;
 }
 

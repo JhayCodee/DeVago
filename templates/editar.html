@@ -1,12 +1,31 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    add
+    editar
 {% endblock %}
 
 {% block main %}
 
-    <form action="/add" method="post">
+<form action="/editar" method="post">
+
+        <div class="form-group">
+            <select class="form-control" name="ruta">
+                <option disabled selected value="">Enviar a</option>
+                <option value="Hoteles">Hoteles</option>
+                <option value="Lugares">Lugares</option>
+                <option value="Ofertas">Ofertas</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <select class="form-control" name="opc">
+                <option disabled selected value="">Seleccione</option>
+                {% for row in rows %}
+                <option value="{{row.nombre}}">{{row.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
 
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="nombre" placeholder="Nombre del Lugar" type="text"/>
@@ -28,16 +47,7 @@
             <input class="form-control" name="url" placeholder="url(imagen)" type="text"/>
         </div>
 
-        <div class="form-group">
-            <select class="form-control" name="ruta">
-                <option disabled selected value="">Enviar a</option>
-                <option value="Hoteles">Hoteles</option>
-                <option value="Lugares">Lugares</option>
-                <option value="Ofertas">Ofertas</option>
-            </select>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Añadir</button>
+        <button class="btn btn-primary" type="submit">Actualizar</button>
 
 
     </form>
