@@ -18,6 +18,8 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///devago.db")
 
+global_opc = ""
+
 @app.route("/")
 @login_required
 def index():
@@ -48,9 +50,40 @@ def Buscar():
     return render_template("ofertas.html", rows=rows)
 
 
-@app.route("/editar")
+@app.route("/editar", methods=["GET", "POST"])
 @login_required
 def Editar():
+
+    if request.method == "POST":
+
+        ruta = request.form.get("ruta")
+
+        if not ruta:
+            return apology("seleccione una opcion")
+
+        if ruta == "Hoteles":
+            global_opc = "hoteles"
+            rows = db.execute("SELECT * FROM hoteles")
+            return render_template("editar2.html", rows=rows)
+
+        if ruta == "Lugares":
+            global_opc = "lugares"
+            rows = db.execute("SELECT * FROM lugares")
+            return render_template("editar2.html", rows=rows)
+
+        if ruta == "Ofertas":
+            global_opc = "ofertas"
+            rows = db.execute("SELECT * FROM ofertas")
+            return render_template("editar2.html", rows=rows)
+
+
+    else:
+        return render_template("editar.html")
+
+
+@app.route("/editar2", methods=["GET", "POST"])
+@login_required
+def Editar2():
 
     if request.method == "POST":
 
@@ -59,7 +92,7 @@ def Editar():
         descripcion= request.form.get("descripcion")
         precio = request.form.get("precio")
         url= request.form.get("url")
-        ruta = request.form.get("ruta")
+        ruta = global_opc
         opc = request.form.get("opc")
 
         if not nombre:
@@ -72,25 +105,28 @@ def Editar():
             return apology("Espacio en blanco")
         if not url:
             return apology("Espacio en blanco")
-        if not ruta:
-            return apology("Espacio en blanco")
         if not opc:
             return apology("Espacio en blanco")
 
-        if ruta == "Hoteles":
 
-            idd = db.execute("SELECT id FROM hoteles WHERE nombre = :name", name=opc)
+        if ruta == "hoteles":
+
+            idd = db.execute("SELECT idhotel FROM hoteles WHERE nombre = :name", name=opc)
 
             act = db.execute('''UPDATE hoteles SET nombre=:nombre, departamento=:departamento,
                             descripcion=:descripcion, precio=:precio, urlimage=:url
-                            ''',
+                            WHERE idhotel= :idd''',
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
-                            precio=precio, url=url)
+                            precio=precio, url=url, idd=idd)
 
-        return render_template("hoteles.html")
+            return render_template("hoteles.html")
+
+        return render_template("editar2.html")
 
     else:
-        return render_template("editar.html")
+        return render_template("editar2.html")
+
+
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
