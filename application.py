@@ -24,13 +24,13 @@ def index():
 @app.route("/lugares", methods=["GET", "POST"])
 @login_required
 def Lugares():
-    return render_template("lugares.html")
+    rows = db.execute('SELECT * FROM lugares')
+    return render_template("lugares.html", rows=rows)
 
 
 @app.route("/hoteles", methods=["GET", "POST"])
 @login_required
 def Hoteles():
-
 
     rows = db.execute('SELECT * FROM hoteles')
     return render_template("hoteles.html", rows=rows)
@@ -58,9 +58,25 @@ def add():
         descripcion= request.form.get("descripcion")
         precio = request.form.get("precio")
         url= request.form.get("url")
+        ruta = request.form.get("ruta")
 
-        # Inserta el usario en la tabla.
-        insertar = db.execute('''
+        if not nombre:
+            return apology("Espacio en blanco")
+        if not departamento:
+            return apology("Espacio en blanco")
+        if not descripcion:
+            return apology("Espacio en blanco")
+        if not precio:
+            return apology("Espacio en blanco")
+        if not url:
+            return apology("Espacio en blanco")
+        if not ruta:
+            return apology("Espacio en blanco")
+
+
+        if ruta == "Hoteles":
+
+            insertar = db.execute('''
                             INSERT INTO hoteles
                             (nombre, departamento, descripcion, precio, urlimage)
                             VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
@@ -68,8 +84,23 @@ def add():
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
                             precio=precio, urlimage=url)
 
-        rows = db.execute('SELECT * FROM hoteles')
-        return render_template("hoteles.html", rows=rows)
+            rows = db.execute('SELECT * FROM hoteles')
+            return render_template("hoteles.html", rows=rows)
+
+        if ruta == "Lugares":
+
+            insertar = db.execute('''
+                            INSERT INTO lugares
+                            (nombre, departamento, descripcion, precio, urlimage)
+                            VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, urlimage=url)
+
+            rows = db.execute('SELECT * FROM lugares')
+            return render_template("lugares.html", rows=rows)
+
+        return redirect("/")
 
     else:
         return render_template("add.html")
@@ -121,29 +152,44 @@ def register():
 def login():
     """Log user in"""
 
-    # Forget any user_id
+    #olvida sesion
     session.clear()
 
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
 
-        # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        # Query database for username
+        elif not request.form.get("ruta"):
+            return apology("debe escoger un tipo de usuario", 403)
+
+        ruta = request.form.get("ruta")
+
+        if ruta == "Admin":
+            #Peticion de Usuario
+            rows = db.execute("SELECT * FROM user WHERE nombre = :username",
+                              username=request.form.get("username"))
+
+            # verifica que sea correcta la info
+            if len(rows) != 1 or not check_password_hash(rows[0]["contraseña"], request.form.get("password")):
+                return apology("invalid username and/or password", 403)
+
+            # Rcuerda la sesion
+            session["admin"] = rows[0]["idusuario"]
+
+
+        #Peticion de Usuario
         rows = db.execute("SELECT * FROM user WHERE nombre = :username",
                           username=request.form.get("username"))
 
-        # Ensure username exists and password is correct
+        # verifica que sea correcta la info
         if len(rows) != 1 or not check_password_hash(rows[0]["contraseña"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
-        # Remember which user has logged in
+        # Rcuerda la sesion
         session["user_id"] = rows[0]["idusuario"]
 
         # Redirect user to home page

@@ -6,6 +6,24 @@
 
 {% block main %}
 
+<<<<<<< HEAD
+=======
+    {%for row in rows%}
+    <div class="container">
+        <div class="item">
+          <img src="{{row.urlimage}}" alt="" class="item-img">
+          <div class="item-text">
+            <h3>{{row.nombre}}, {{row.departamento}} </h3>
+            <p>{{row.descripcion}}</p>
+            <p>precio: {{row.precio}}$</p>
+          </div>
+        </div>
+      </div>
+    {%endfor%}
+
+
+
+>>>>>>> 2e75048685927a769dd57a1568c2c41405faf63f
     <div class="container">
     <div class="item">
       <img src="/static/masaya.jpg" alt="" class="item-img">
@@ -63,4 +81,8 @@
       </div>
     </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2e75048685927a769dd57a1568c2c41405faf63f
 {% endblock %}
