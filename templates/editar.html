@@ -17,37 +17,7 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <select class="form-control" name="opc">
-                <option disabled selected value="">Seleccione</option>
-                {% for row in rows %}
-                <option value="{{row.nombre}}">{{row.nombre}}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="nombre" placeholder="Nombre del Lugar" type="text"/>
-        </div>
-
-        <div class="form-group">
-            <input class="form-control" name="departamento" placeholder="Departamento" type="text"/>
-        </div>
-
-        <div class="form-group">
-            <input class="form-control" name="descripcion" placeholder="Descripcion" type="text"/>
-        </div>
-
-        <div class="form-group">
-            <input class="form-control" name="precio" placeholder="Precio" type="text"/>
-        </div>
-
-        <div class="form-group">
-            <input class="form-control" name="url" placeholder="url(imagen)" type="text"/>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Actualizar</button>
+        <button class="btn btn-primary" type="submit">Seleccionar</button>
 
 
     </form>
