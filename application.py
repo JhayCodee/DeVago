@@ -21,9 +21,11 @@ db = SQL("sqlite:///devago.db")
 def index():
     return render_template("index.html")
 
+
 @app.route("/lugares", methods=["GET", "POST"])
 @login_required
 def Lugares():
+
     rows = db.execute('SELECT * FROM lugares')
     return render_template("lugares.html", rows=rows)
 
@@ -36,16 +38,57 @@ def Hoteles():
     return render_template("hoteles.html", rows=rows)
 
 
-@app.route("/buscar")
+@app.route("/ofertas", methods=["GET", "POST"])
 @login_required
 def Buscar():
-    return render_template("search.html")
+
+    rows = db.execute('SELECT * FROM ofertas')
+    return render_template("ofertas.html", rows=rows)
 
 
-@app.route("/about")
+@app.route("/editar")
 @login_required
-def About():
-    return render_template("about.html")
+def Editar():
+
+    if request.method == "POST":
+
+        nombre = request.form.get("nombre")
+        departamento = request.form.get("departamento")
+        descripcion= request.form.get("descripcion")
+        precio = request.form.get("precio")
+        url= request.form.get("url")
+        ruta = request.form.get("ruta")
+        opc = request.form.get("opc")
+
+        if not nombre:
+            return apology("Espacio en blanco")
+        if not departamento:
+            return apology("Espacio en blanco")
+        if not descripcion:
+            return apology("Espacio en blanco")
+        if not precio:
+            return apology("Espacio en blanco")
+        if not url:
+            return apology("Espacio en blanco")
+        if not ruta:
+            return apology("Espacio en blanco")
+        if not opc:
+            return apology("Espacio en blanco")
+
+        if ruta == "Hoteles":
+
+            idd = db.execute("SELECT id FROM hoteles WHERE nombre = :name", name=opc)
+
+            act = db.execute('''UPDATE hoteles SET nombre=:nombre, departamento=:departamento,
+                            descripcion=:descripcion, precio=:precio, urlimage=:url
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, url=url)
+
+        return render_template("hoteles.html")
+
+    else:
+        return render_template("editar.html")
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
@@ -99,6 +142,19 @@ def add():
 
             rows = db.execute('SELECT * FROM lugares')
             return render_template("lugares.html", rows=rows)
+
+        if ruta == "Ofertas":
+
+            insertar = db.execute('''
+                            INSERT INTO ofertas
+                            (nombre, departamento, descripcion, precio, urlimage)
+                            VALUES(:nombre, :departamento, :descripcion, :precio, :urlimage)
+                            ''',
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, urlimage=url)
+
+            rows = db.execute('SELECT * FROM ofertas')
+            return render_template("ofertas.html", rows=rows)
 
         return redirect("/")
 
@@ -177,6 +233,9 @@ def login():
             if len(rows) != 1 or not check_password_hash(rows[0]["contraseña"], request.form.get("password")):
                 return apology("invalid username and/or password", 403)
 
+            if rows[0]["categoria"] != "Admin":
+                return apology("Usted no es admin")
+
             # Rcuerda la sesion
             session["admin"] = rows[0]["idusuario"]
 
@@ -193,7 +252,7 @@ def login():
         session["user_id"] = rows[0]["idusuario"]
 
         # Redirect user to home page
-        return redirect("/")
+        return render_template("index.html")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:

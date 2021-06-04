@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Ofertas
+{% endblock %}
+
+{% block main %}
+
+{%for row in rows%}
+    <div class="container">
+        <div class="item">
+          <img src="{{row.urlimage}}" alt="" class="item-img">
+          <div class="item-text">
+            <h3>{{row.nombre}}, {{row.departamento}} </h3>
+            <p>{{row.descripcion}}</p>
+            <p>precio: {{row.precio}}$</p>
+          </div>
+        </div>
+      </div>
+    {%endfor%}
+
+{% endblock %}
