@@ -316,7 +316,7 @@ def login():
         # Redirect user to home page
         return render_template("index.html")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    
     else:
         return render_template("login.html")
 
