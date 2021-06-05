@@ -67,7 +67,7 @@ body{
 
 .titulo {
   /* Add position: relative to enable absolutely positioned elements inside the image (place text) */
-  position: relative;
+  position: center;
   /* Add a white text color to all elements inside the .bgimg container */
   color: black;
   /* Add a font */
@@ -87,9 +87,12 @@ body{
 }
 
 .item-img1{
-  width: 100%;
-  height: 100%;
+  width: 60%;
+  height: 65%;
   display: block;
+  margin-left:auto;
+  margin-right:auto;
+
 
 }
 
