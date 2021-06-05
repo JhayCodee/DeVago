@@ -16,12 +16,18 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///devago.db")
 
-global_opc = ""
+global_opc = []
 
 @app.route("/")
 @login_required
 def index():
     return render_template("index.html")
+
+
+@app.route("/map")
+@login_required
+def map():
+    return render_template("map.html")
 
 
 @app.route("/lugares", methods=["GET", "POST"])
@@ -60,28 +66,29 @@ def Editar():
             return apology("seleccione una opcion")
 
         if ruta == "Hoteles":
-            global_opc = "hoteles"
+
+            opc = "hoteles"
             rows = db.execute("SELECT * FROM hoteles")
-            return render_template("editar2.html", rows=rows)
+            return render_template("editar2.html", rows=rows, opc1=opc)
 
         if ruta == "Lugares":
-            global_opc = "lugares"
+            opc = "lugares"
             rows = db.execute("SELECT * FROM lugares")
-            return render_template("editar2.html", rows=rows)
+            return render_template("editar2.html", rows=rows, opc1=opc)
 
         if ruta == "Ofertas":
-            global_opc = "ofertas"
+            opc = "ofertas"
             rows = db.execute("SELECT * FROM ofertas")
-            return render_template("editar2.html", rows=rows)
+            return render_template("editar2.html", rows=rows, opc1=opc)
 
 
     else:
         return render_template("editar.html")
 
 
-@app.route("/editar2", methods=["GET", "POST"])
+@app.route("/editar2/<opc1>", methods=["GET", "POST"])
 @login_required
-def Editar2():
+def Editar2(opc1):
 
     if request.method == "POST":
 
@@ -90,8 +97,8 @@ def Editar2():
         descripcion= request.form.get("descripcion")
         precio = request.form.get("precio")
         url= request.form.get("url")
-        ruta = global_opc
         opc = request.form.get("opc")
+
 
         if not nombre:
             return apology("Espacio en blanco")
@@ -106,18 +113,62 @@ def Editar2():
         if not opc:
             return apology("Espacio en blanco")
 
+        #aactualizar hoteles
+        if opc1 == "hoteles":
 
-        if ruta == "hoteles":
+            idd = db.execute("SELECT * FROM hoteles WHERE nombre = :name", name=opc)
+            hid= idd[0]["idhotel"]
 
-            idd = db.execute("SELECT idhotel FROM hoteles WHERE nombre = :name", name=opc)
-
-            act = db.execute('''UPDATE hoteles SET nombre=:nombre, departamento=:departamento,
+            act = db.execute("""
+                            UPDATE hoteles SET nombre=:nombre, departamento=:departamento,
                             descripcion=:descripcion, precio=:precio, urlimage=:url
-                            WHERE idhotel= :idd''',
+                            WHERE idhotel=:idd
+                            """,
                             nombre=nombre, departamento=departamento, descripcion=descripcion,
-                            precio=precio, url=url, idd=idd)
+                            precio=precio, url=url, idd=hid)
 
-            return render_template("hoteles.html")
+            rows = db.execute("select * from hoteles")
+            return render_template("hoteles.html", rows=rows)
+
+
+        #aactualizar lugares
+        if opc1 == "lugares":
+
+            idd = db.execute("SELECT * FROM lugares WHERE nombre = :name", name=opc)
+            hid= idd[0]["idlugar"]
+
+            act = db.execute("""
+                            UPDATE lugares SET nombre=:nombre, departamento=:departamento,
+                            descripcion=:descripcion, precio=:precio, urlimage=:url
+                            WHERE idlugar=:idd
+                            """,
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, url=url, idd=hid)
+
+            rows = db.execute("select * from lugares")
+            return render_template("lugares.html", rows=rows)
+
+
+        #aactualizar lugares
+        if opc1 == "ofertas":
+
+            idd = db.execute("SELECT * FROM ofertas WHERE nombre = :name", name=opc)
+            hid= idd[0]["id"]
+
+            act = db.execute("""
+                            UPDATE lugares SET nombre=:nombre, departamento=:departamento,
+                            descripcion=:descripcion, precio=:precio, urlimage=:url
+                            WHERE id=:idd
+                            """,
+                            nombre=nombre, departamento=departamento, descripcion=descripcion,
+                            precio=precio, url=url, idd=hid)
+
+            rows = db.execute("select * from ofertas")
+            return render_template("ofertas.html", rows=rows)
+
+
+
+
 
         return render_template("editar2.html")
 
